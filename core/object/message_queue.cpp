@@ -95,7 +95,8 @@ Error CallQueue::push_callablep(const Callable &p_callable, const Variant **p_ar
 	if ((page_bytes[pages_used - 1] + room_needed) > uint32_t(PAGE_SIZE_BYTES)) {
 		if (pages_used == max_pages) {
 			fprintf(stderr, "Failed method: %s. Message queue out of memory. %s\n", String(p_callable).utf8().get_data(), error_text.utf8().get_data());
-			statistics();
+			// EDIT: This crashes. Need to ru na debug build to find out why. Repro is print in a very long loop.
+			//statistics();
 			UNLOCK_MUTEX;
 			return ERR_OUT_OF_MEMORY;
 		}

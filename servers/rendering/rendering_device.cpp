@@ -3626,7 +3626,11 @@ RID RenderingDevice::uniform_set_create(const VectorView<RD::Uniform> &p_uniform
 	ERR_FAIL_COND_V(p_uniforms.size() == 0, RID());
 
 	Shader *shader = shader_owner.get_or_null(p_shader);
-	ERR_FAIL_NULL_V(shader, RID());
+	// EDIT: Remove expensive error message.
+	if (unlikely(shader == nullptr)) {
+		return RID();
+	}
+	//ERR_FAIL_NULL_V(shader, RID());
 
 	ERR_FAIL_COND_V_MSG(p_shader_set >= (uint32_t)shader->uniform_sets.size() || shader->uniform_sets[p_shader_set].is_empty(), RID(),
 			"Desired set (" + itos(p_shader_set) + ") not used by shader.");
@@ -4045,7 +4049,11 @@ void RenderingDevice::uniform_set_set_invalidation_callback(RID p_uniform_set, I
 	_THREAD_SAFE_METHOD_
 
 	UniformSet *us = uniform_set_owner.get_or_null(p_uniform_set);
-	ERR_FAIL_NULL(us);
+	// EDIT: Remove expensive error message.
+	//ERR_FAIL_NULL(us);
+	if (unlikely(us == nullptr)) {
+		return;
+	}
 	us->invalidated_callback = p_callback;
 	us->invalidated_callback_userdata = p_userdata;
 }
