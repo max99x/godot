@@ -705,6 +705,7 @@ elif methods.using_clang(env) or methods.using_emcc(env):
 # Set optimize and debug_symbols flags.
 # "custom" means do nothing and let users set their own optimization flags.
 # Needs to happen after configure to have `env.msvc` defined.
+env["debug_symbols"] = True  # Override, because for some reason it isn't being read from the command line.
 if env.msvc:
     if env["debug_symbols"]:
         env.Append(CCFLAGS=["/Zi", "/FS"])

@@ -1501,30 +1501,32 @@ Error ShaderCompiler::compile(RS::ShaderMode p_mode, const String &p_code, Ident
 		}
 
 		// Print the files.
-		for (const KeyValue<String, Vector<String>> &E : includes) {
-			if (E.key.is_empty()) {
-				if (p_path == "") {
-					print_line("--Main Shader--");
+		if (false) {  // DISABLED: This slows the editor down horribly on large shaders as it auto-compiles during editing.
+			for (const KeyValue<String, Vector<String>> &E : includes) {
+				if (E.key.is_empty()) {
+					if (p_path == "") {
+						print_line("--Main Shader--");
+					} else {
+						print_line("--" + p_path + "--");
+					}
 				} else {
-					print_line("--" + p_path + "--");
+					print_line("--" + E.key + "--");
 				}
-			} else {
-				print_line("--" + E.key + "--");
-			}
-			int err_line = -1;
-			for (int i = 0; i < include_positions.size(); i++) {
-				if (include_positions[i].file == E.key) {
-					err_line = include_positions[i].line;
+				int err_line = -1;
+				for (int i = 0; i < include_positions.size(); i++) {
+					if (include_positions[i].file == E.key) {
+						err_line = include_positions[i].line;
+					}
 				}
-			}
-			const Vector<String> &V = E.value;
-			for (int i = 0; i < V.size(); i++) {
-				if (i == err_line - 1) {
-					// Mark the error line to be visible without having to look at
-					// the trace at the end.
-					print_line(vformat("E%4d-> %s", i + 1, V[i]));
-				} else {
-					print_line(vformat("%5d | %s", i + 1, V[i]));
+				const Vector<String> &V = E.value;
+				for (int i = 0; i < V.size(); i++) {
+					if (i == err_line - 1) {
+						// Mark the error line to be visible without having to look at
+						// the trace at the end.
+						print_line(vformat("E%4d-> %s", i + 1, V[i]));
+					} else {
+						print_line(vformat("%5d | %s", i + 1, V[i]));
+					}
 				}
 			}
 		}
