@@ -921,11 +921,14 @@ Ref<Resource> ResourceLoader::_load_complete_inner(LoadToken &p_load_token, Erro
 		} else {
 			// A leaf task being awaited => Propagate the resource changed connections.
 			if (Thread::is_main_thread()) {
-				// On the main thread it's safe to migrate the connections to the standard signal mechanism.
-				for (const ThreadLoadTask::ResourceChangedConnection &rcc : load_task_ptr->resource_changed_connections) {
-					if (rcc.callable.is_valid()) {
-						rcc.source->connect_changed(rcc.callable, rcc.flags);
+				if (!load_task_ptr->connections_propagated) {
+					// On the main thread it's safe to migrate the connections to the standard signal mechanism.
+					for (const ThreadLoadTask::ResourceChangedConnection &rcc : load_task_ptr->resource_changed_connections) {
+						if (rcc.callable.is_valid()) {
+							rcc.source->connect_changed(rcc.callable, rcc.flags);
+						}
 					}
+					load_task_ptr->connections_propagated = true;
 				}
 			} else {
 				// On non-main threads, we have to queue and call it done when processed.
