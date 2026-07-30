@@ -27,7 +27,7 @@ jobs:
           - name: Template (target=template_release)
             cache-name: macos-template
             target: template_release
-            scons-flags: debug_symbols=no
+            scons-flags: debug_symbols=yes
             bin: ./bin/godot.macos.template_release.universal
 
     steps:
